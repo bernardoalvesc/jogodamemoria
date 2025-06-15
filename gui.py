@@ -13,7 +13,7 @@ def tela_menu(tela, clock):
         tela.fill(COR_FUNDO)
 
         # Título
-        titulo = FONT_END.render("Jogo da Memória", True, COR_TEXTO)
+        titulo = FONT_END.render("Memory Master", True, COR_TEXTO)
         tela.blit(titulo, (TAMANHO_TELA[0] // 2 - titulo.get_width() // 2, 60))
 
         # Frase decorativa
