@@ -8,24 +8,25 @@ MARGEM = 20
 FPS = 60
 
 EMOJIS = [
-    '🍎', '🍇', '🐱', '🐶', '🌊', '⭐', '🚀', '☀️',
-    '🌸', '🌼', '🍄', '🍓', '💜', '💛', '💙', '💚',
-    '🦋', '🐸', '🧊', '🧠', '🔥', '🎮', '👾', '🎲',
-    '⚡', '🧸', '🐧', '🍕', '🎧', '🐢', '📦', '🌙'
+    '🍕', '🍦', '🍭', '🎮', '🐱', '🐶', '🧸', '🐸',
+    '🚀', '🌈', '⚽', '🎲', '🧁', '🎈', '👾', '⭐',
+    '🐵', '🐤', '🐢', '🐧', '🍓', '🍇', '💜', '💛',
+    '🍉', '🐝', '🦄', '☀️', '🌙', '🎧', '📦', '🦋'
 ]
 
 pygame.font.init()
 FONT_EMOJI = pygame.font.SysFont('Segoe UI Emoji', 64)
-FONT_HUD = pygame.font.SysFont('Arial', 24, bold=True)
-FONT_END = pygame.font.SysFont('Arial', 48, bold=True)
-FONT_MENU = pygame.font.SysFont('Arial', 36)
+FONT_HUD = pygame.font.SysFont('Verdana MS', 28, bold=True)
+FONT_END = pygame.font.SysFont('Verdana MS', 52, bold=True)
+FONT_MENU = pygame.font.SysFont('Verdana MS', 36)
+FONT_TITULO = pygame.font.SysFont('Verdana MS', 56, bold=True)
 
-COR_FUNDO = (18, 18, 18)
-COR_CARTA_FECHADA = (50, 50, 50)
-COR_CARTA_ABERTA = (80, 80, 80)
-COR_TEXTO = (240, 240, 240)
-COR_HUD = (200, 200, 200)
+COR_FUNDO = (40, 40, 100)
+COR_CARTA_FECHADA = (80, 80, 160)
+COR_CARTA_ABERTA = (160, 200, 240)
+COR_TEXTO = (255, 255, 255)
+COR_HUD = (240, 240, 240)
 COR_VITORIA = (255, 215, 0)
-COR_BOTAO = (70, 70, 70)
-COR_BOTAO_HOVER = (100, 100, 100)
-COR_BORDA = (130, 130, 130)
+COR_BOTAO = (100, 160, 240)
+COR_BOTAO_HOVER = (130, 180, 255)
+COR_BORDA = (255, 255, 255)

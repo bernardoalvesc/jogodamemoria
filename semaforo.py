@@ -1,5 +1,3 @@
-# semaforo.py
-
 import threading
 
 semaforo_p1 = threading.Semaphore(1)
