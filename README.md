@@ -36,7 +36,6 @@ Este projeto foi desenvolvido em grupo no 3° semestre da faculdade, na matéria
 2. Abra o terminal
 3. Digite: pip install pygame
 4. Dê dois cliques em `main.py` ou execute pelo terminal: python main.py
-✅ O jogo vai rodar em tela cheia!
 
 Após isso, você já pode começar a jogar e se divertir!
 
