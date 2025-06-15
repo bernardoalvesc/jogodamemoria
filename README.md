@@ -15,7 +15,7 @@ Este é o repositório do trabalho desenvolvido para a matéria de Sistemas Oper
 
 ## 🧐 Sobre
 
-Este projeto foi desenvolvido em grupo no 3° semestre da faculdade, na matéria de Sistemas Operacionais ministrada pelo professor Beatriz.
+Este projeto foi desenvolvido em grupo no 3° semestre da faculdade, na matéria de Sistemas Operacionais ministrada pela professora Beatriz.
 
 ---
 
