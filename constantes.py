@@ -1,32 +1,25 @@
-# constantes.py
-
 import pygame
 
-# Tela
-TAMANHO_TELA = (1000, 800)
+pygame.init()
+info = pygame.display.Info()
+TAMANHO_TELA = (info.current_w, info.current_h)
 TAMANHO_CARTA = (100, 100)
 MARGEM = 20
-
-# FPS
 FPS = 60
 
-# Emojis
 EMOJIS = [
-    '🍎', '🍇', '🐱', '🐶',
-    '🌊', '⭐', '🚀', '☀️',
-    '🌸', '🌼', '🍄', '🍓',
-    '💜', '💛', '💙', '💚',
-    '🦋', '🐸', '🧊', '🧠'
+    '🍎', '🍇', '🐱', '🐶', '🌊', '⭐', '🚀', '☀️',
+    '🌸', '🌼', '🍄', '🍓', '💜', '💛', '💙', '💚',
+    '🦋', '🐸', '🧊', '🧠', '🔥', '🎮', '👾', '🎲',
+    '⚡', '🧸', '🐧', '🍕', '🎧', '🐢', '📦', '🌙'
 ]
 
-# Fontes
 pygame.font.init()
 FONT_EMOJI = pygame.font.SysFont('Segoe UI Emoji', 64)
 FONT_HUD = pygame.font.SysFont('Arial', 24, bold=True)
 FONT_END = pygame.font.SysFont('Arial', 48, bold=True)
 FONT_MENU = pygame.font.SysFont('Arial', 36)
 
-# Cores
 COR_FUNDO = (18, 18, 18)
 COR_CARTA_FECHADA = (50, 50, 50)
 COR_CARTA_ABERTA = (80, 80, 80)
