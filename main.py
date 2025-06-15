@@ -1,155 +1,108 @@
+# main.py (modo multiplayer com semáforo real e clique por jogador, com clique centralizado corrigido)
+
 import pygame
 import threading
 import time
 from constantes import *
 from utils import criar_tabuleiro
 from semaforo import semaforo_p1, semaforo_p2
-from jogador_thread import thread_jogador
 from gui import tela_menu, tela_vitoria
+from jogador_thread import thread_jogador
 
-# Inicialização
 pygame.init()
 tela = pygame.display.set_mode(TAMANHO_TELA)
-pygame.display.set.caption('Click & Pair')
+pygame.display.set_caption('Jogo da Memória')
 clock = pygame.time.Clock()
 
-# Função para rodar a partida
-def rodar_jogo(modo_vs_cpu, nivel_cpu, grid):
-  global carta_virada, tempo_ultima_jogada, vez_jogador
+# Estados globais
+jogo_em_execucao = True
+jogadas_pendentes = [None, None]
 
-  tabuleiro, visivel, encontradas, cpu_memoria = criar_tabuleiro(grid)
-  jogadas_pendentes = []
-  pontuacao = [0, 0]
+def rodar_jogo(grid):
+    global jogo_em_execucao, jogadas_pendentes
 
-  carta_virada = []
-  tempo_ultima_jogada = 0
-  vez_jogador = 0
-  fim_de_jogo = False
+    jogo_em_execucao = True
+    tabuleiro, visivel, encontradas, _ = criar_tabuleiro(grid)
+    pontuacao = [0, 0]
+    vez_jogador = [0]
+    total_viradas = []
+    tempo_ultima_jogada = [0]
 
-  # Inicia as threads dos jogadores
-  threading.Thread(target=thread_jogador, args=(0, semaforo_p1, semaforo_p2, jogadas_pendentes, modo_vs_cpu, grid, visivel, encontradas, cpu_memoria, nivel_cpu), daemon=True).start()
-  threading.Thread(target=thread_jogador, args=(1, semaforo_p2, semaforo_p1, jogadas_pendentes, modo_vs_cpu, grid, visivel, encontradas, cpu_memoria, nivel_cpu), daemon=True).start()
+    largura_total = grid[0] * (TAMANHO_CARTA[0] + MARGEM)
+    altura_total = grid[1] * (TAMANHO_CARTA[1] + MARGEM)
+    offset_x = (TAMANHO_TELA[0] - largura_total) // 2
+    offset_y = (TAMANHO_TELA[1] - altura_total) // 2
 
-  # Loop da partida
+    threading.Thread(target=thread_jogador, args=(0, semaforo_p1, semaforo_p2, grid, tabuleiro, visivel, encontradas, pontuacao, vez_jogador, jogadas_pendentes, total_viradas, tempo_ultima_jogada), daemon=True).start()
+    threading.Thread(target=thread_jogador, args=(1, semaforo_p2, semaforo_p1, grid, tabuleiro, visivel, encontradas, pontuacao, vez_jogador, jogadas_pendentes, total_viradas, tempo_ultima_jogada), daemon=True).start()
+    semaforo_p1.release()
 
-  while not fim_de_jogo:
-    clock.tick (FPS)
+    while jogo_em_execucao:
+        clock.tick(FPS)
 
-    # Eventos
-    for event in pygame.event.get():
-      if event.type == pygame.QUIT:
-        pygame.quit()
-        exit()
-      elif event.type == pygame.MOUSEBUTTONDOWN and vez_jogador == 0 and not modo_vs_cpu:
-        x, y = event.pos
-        col = x // (TAMANHO_CARTA[0] + MARGEM)
-        lin = y // (TAMANHO_CARTA[1] + MARGEM)
-        if 0 <= lin < grid[1] and 0 <= col < grid [0]:
-          if not visivel[lin][col] and not encontradas [lin][col]:
-            jogadas_pendentes.append((0, (lin,col)))
-            SOUND_CLICK.play()
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                exit()
+            elif event.type == pygame.MOUSEBUTTONDOWN:
+                x, y = pygame.mouse.get_pos()
+                col = (x - offset_x) // (TAMANHO_CARTA[0] + MARGEM)
+                lin = (y - offset_y) // (TAMANHO_CARTA[1] + MARGEM)
+                if 0 <= lin < grid[1] and 0 <= col < grid[0]:
+                    jogadas_pendentes[vez_jogador[0]] = (lin, col)
 
-    # Verifica jogada pendente
-    if len (jogadas_pendentes) > 0:
-      jogador_id, (lin, col) = jogadas_pendentes.pop(0)
-
-      if not visivel[lin][col] and not encontradas[lin][col]:
-        # Animação de flip simples (escala de 0.5 a 1.0)
-        for scale in [0.5, 0.7, 0.9, 1.0]:
-          desenhar_tabuleiro(tela, tabuleiro, visivel, encontradas, grid, scale)
-          pygame.display.flip()
-          clock.tick(60)
-
-        visivel[lin][col] = True
-        carta_virada.append((lin,col))
-
-        emoji_carta = tabuleiro[lin][col]
-        if emoji_carta not in cpu_memoria:
-          cpu_memoria[emoji_carta] = []
-        if (lin, col) not in cpu_memoria[emoji_carta]:
-          cpu_memoria[emoji_carta].append((lin, col))
-
-        if len(carta_virada) == 2:
-          l1, c1 = carta_virada[0]
-          l2,c2 = carta_virada[1]
-          if tabuleiro[l1][c1] == tabuleiro[l2][c2]
-          encontradas[l1][c1] = True
-          encontradas[l2][c2] = True
-          pontuacao[jogador_id] += 1
-          SOUND_MATCH.play()
-        else:
-          tempo_ultima_jogada = time.time ()
-        carta_virada = []
-
-        vez_jogador = 1 - vez_jogador
-
-  # Esconde cartas erradas
-  if tempo_ultima_jogada > 0 and time.time() - tempo_ultima_jogada > 1:
-    for i in rage (grid[1]):
-      for j in range (grid[0]):
-        if visivel[i][j] and not encontradas [i][j]:
-          visivel[i][j] = False
-        tempo_ultima_jogada = 0
-
- # Renderiza
-        desenhar_tabuleiro(tela, tabuleiro, visivel, encontradas, grid)
-        hud_text = FONT_HUD.render(f'Jogador 1: {pontuacao[0]}  |  Jogador 2: {pontuacao[1]}', True, COR_HUD)
-        tela.blit(hud_text, (20, TAMANHO_TELA[1] - 40))
-
- # Fim de jogo
-        total_pares = (grid[0] * grid[1]) // 2
-        if pontuacao[0] + pontuacao[1] == total_pares:
-            fim_de_jogo = True
-            SOUND_WIN.play()
-            pygame.time.delay(500)
-
-            # Mensagem
-            if pontuacao[0] > pontuacao[1]:
-                mensagem = "Jogador 1 venceu!"
-            elif pontuacao[1] > pontuacao[0]:
-                mensagem = "Jogador 2 venceu!"
+        if tempo_ultima_jogada[0] and time.time() - tempo_ultima_jogada[0] > 1:
+            for l, c in total_viradas:
+                visivel[l][c] = False
+            total_viradas.clear()
+            tempo_ultima_jogada[0] = 0
+            vez_jogador[0] = 1 - vez_jogador[0]
+            if vez_jogador[0] == 0:
+                semaforo_p1.release()
             else:
-                mensagem = "Empate!"
+                semaforo_p2.release()
 
-            tela_vitoria(tela, clock, mensagem)
+        desenhar_tabuleiro(tela, tabuleiro, visivel, encontradas, grid)
+        hud = FONT_HUD.render(f"Jogador 1: {pontuacao[0]}  |  Jogador 2: {pontuacao[1]}", True, COR_HUD)
+        tela.blit(hud, (20, TAMANHO_TELA[1] - 40))
+        vez_txt = FONT_HUD.render(f"Vez do Jogador {vez_jogador[0] + 1}", True, COR_TEXTO)
+        tela.blit(vez_txt, (TAMANHO_TELA[0] - 280, 20))
+
+        if sum(pontuacao) == (grid[0] * grid[1]) // 2:
+            pygame.time.delay(800)
+            msg = "Empate!"
+            if pontuacao[0] > pontuacao[1]: msg = "Jogador 1 venceu!"
+            elif pontuacao[1] > pontuacao[0]: msg = "Jogador 2 venceu!"
+            tela_vitoria(tela, clock, msg)
+            jogo_em_execucao = False
 
         pygame.display.flip()
 
-# --- Função desenhar tabuleiro ---
-def desenhar_tabuleiro(tela, tabuleiro, visivel, encontradas, grid, scale=1.0):
+def desenhar_tabuleiro(tela, tabuleiro, visivel, encontradas, grid):
     tela.fill(COR_FUNDO)
+
+    largura_total = grid[0] * (TAMANHO_CARTA[0] + MARGEM)
+    altura_total = grid[1] * (TAMANHO_CARTA[1] + MARGEM)
+    offset_x = (TAMANHO_TELA[0] - largura_total) // 2
+    offset_y = (TAMANHO_TELA[1] - altura_total) // 2
 
     for i in range(grid[1]):
         for j in range(grid[0]):
-            x = j * (TAMANHO_CARTA[0] + MARGEM) + MARGEM
-            y = i * (TAMANHO_CARTA[1] + MARGEM) + MARGEM
-
+            x = offset_x + j * (TAMANHO_CARTA[0] + MARGEM)
+            y = offset_y + i * (TAMANHO_CARTA[1] + MARGEM)
             rect = pygame.Rect(x, y, TAMANHO_CARTA[0], TAMANHO_CARTA[1])
-            pygame.draw.rect(tela, COR_CARTA_ABERTA, rect)
-
+            pygame.draw.rect(tela, COR_CARTA_ABERTA, rect, border_radius=12)
             if visivel[i][j] or encontradas[i][j]:
                 emoji = tabuleiro[i][j]
                 img = FONT_EMOJI.render(emoji, True, COR_TEXTO)
-                img = pygame.transform.scale(img, (int(img.get_width() * scale), int(img.get_height() * scale)))
                 img_rect = img.get_rect(center=rect.center)
                 tela.blit(img, img_rect)
             else:
-                pygame.draw.rect(tela, COR_CARTA_FECHADA, rect)
+                pygame.draw.rect(tela, COR_CARTA_FECHADA, rect, border_radius=12)
 
-# --- Loop principal geral ---
+# Loop principal
 while True:
     modo, nivel = tela_menu(tela, clock)
-
-    if modo == 'cpu':
-        if nivel == 1:
-            grid = (4, 4)
-        elif nivel == 2:
-            grid = (6, 6)
-        elif nivel == 3:
-            grid = (8, 8)
-        rodar_jogo(modo_vs_cpu=True, nivel_cpu=nivel, grid=grid)
-
-    elif modo == 'multi':
-        rodar_jogo(modo_vs_cpu=False, nivel_cpu=1, grid=(4, 4))
-
-
+    if modo == 'multi':
+        grid_size = {1: (4, 4), 2: (6, 6), 3: (6, 8), 4: (8, 8)}[nivel]
+        rodar_jogo(grid=grid_size)
