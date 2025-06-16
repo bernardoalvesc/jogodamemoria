@@ -15,14 +15,14 @@ Este é o repositório do trabalho desenvolvido para a matéria de Sistemas Oper
 
 ## 🧐 Sobre
 
-Este projeto foi desenvolvido em grupo no 3° semestre da faculdade, na matéria de Sistemas Operacionais ministrada pelo professor Beatriz.
+Este projeto foi desenvolvido em grupo no 3° semestre da faculdade, na matéria de Sistemas Operacionais ministrada pela professora Beatriz.
 
 ---
 
 ## 🚀 Tecnologias Utilizadas
 
 - **Linguagens:** Python
-- **Biblioteca:** PyGame
+- **Bibliotecas:** PyGame, PyInstaller
 
 ## 🔧 Como rodar o projeto
 
@@ -30,7 +30,7 @@ Este projeto foi desenvolvido em grupo no 3° semestre da faculdade, na matéria
 
 - [Python](https://www.python.org/downloads/)
 
-### Passos para rodar
+### Passos para rodar (local)
 
 1. Clone o repositório: git clone https://github.com/bernardoalvesc/jogodamemoria
 2. Abra o terminal
