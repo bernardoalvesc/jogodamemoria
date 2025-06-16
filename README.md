@@ -22,7 +22,7 @@ Este projeto foi desenvolvido em grupo no 3° semestre da faculdade, na matéria
 ## 🚀 Tecnologias Utilizadas
 
 - **Linguagens:** Python
-- **Bibliotecas:** PyGame, PyInstaller
+- **Biblioteca:** PyGame
 
 ## 🔧 Como rodar o projeto
 
